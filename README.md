@@ -1,26 +1,72 @@
-#  Как работать с репозиторием финального задания
 
-## Что нужно сделать
+### Описание проекта
 
-Настроить запуск проекта Kittygram в контейнерах и CI/CD с помощью GitHub Actions
+Kittygram представляет собой соц.сеть, где пользователи могут делится фотографиями котов.
 
-## Как проверить работу с помощью автотестов
+Реализован CI/CD.
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект Kittygram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект Taski
-dockerhub_username: ваш_логин_на_докерхабе
-```
+### Как запустить проект:
+`git clone git@github.com:nemnogospaal/kittygram.git`  клонировать репозиторий
 
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `kittygram_workflow.yml` в корневой директории проекта.
+**Docker**\
+    Перед началом нужно установить и запустить Docker.\
+    `docker-compose up`  запустить Docker Compose\
+    Открыть новый терминал\
+    `docker compose exec backend python manage.py collectstatic`  cобрать статику Django
+    `docker compose exec backend cp -r /app/collected_static/. /backend_static/static/`  копируем статику на volume\
+    `docker compose exec backend python manage.py migrate`  выполнить миграции\
+    `docker compose exec backend python manage.py createsuperuser` создать суперпользователя\
 
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
+После запуска будут доступны следующие адреса:\
 
-## Чек-лист для проверки перед отправкой задания
+    - главная  http://localhost:8000/
 
-- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
-- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
-- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
-- В корне проекта есть файл `kittygram_workflow.yml`.
+    - админка  http://localhost:8000/admin/
+
+Дополнительные команды для работы:\
+    `docker compose up --build`  пересборка контейнеров\
+    `docker-compose stop`  остановить Docker Compose\
+    `docker-compose down`  остановить Docker Compose и удалить все контейнеры
+
+При запуске использовались следующие версии пакетов:
+- Nodejs -> v15.9.0
+- npm -> 7.5.3
+- Python -> 3.9.10
+- pip -> 24.0
+
+Запуск **backend**\
+
+    `python -m venv venv`  создать виртуальное окружение\
+    `source venv/Scripts/activate`  активировать виртуальное окружение\
+    `python -m pip install --upgrade pip`  обновить установщик\
+    `cd backend`  Перейдите в директорию backend\
+    `pip install -r requirements.txt`  установить зависимости из файла requirements.txt\
+    `python manage.py migrate`  выполнить миграции\
+    `python manage.py createsuperuser`  создать суперпользователя\
+    `python manage.py runserver`  запустить проект
+
+Запуск **frontend**\
+
+`cd frontend`  перейти в директорию frontend\
+`npm i`  установить зависимости\
+`npm run start`  запуск приложения
+
+После запуска будут доступны следующие адреса:
+- главная -> http://localhost:3000/
+- админка -> http://127.0.0.1:8000/admin/
+
+### Cписок используемых технологий:
+
+- Django
+- React
+- djangorestframework
+- Docker
+
+### Как заполнить файл .env:
+В проекте есть файл .env.example заполните свой по аналогии.
+
+`POSTGRES_USER` - пользователь БД\
+`POSTGRES_PASSWORD` - пароль БД\
+`POSTGRES_DB` - название БД\
+`DB_HOST` - имя контейнера, где запущен сервер БД\
+`DB_PORT` - порт, по которому Django будет обращаться к БД\
